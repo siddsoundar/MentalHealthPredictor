@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
-
-
 from flask import Flask, request, jsonify, render_template
 import pickle
 
-# Load the trained model
+
 model = pickle.load(open('linear_regression_model.pkl', 'rb'))
 
 app = Flask(__name__)
@@ -31,14 +28,3 @@ def predict():
 if __name__ == '__main__':
     app.run(debug=True)
 
-# In[3]:
-
-
-get_ipython().run_line_magic('tb', '')
-
-# In[ ]:
-
-
-get_ipython().run_line_magic('tb', '')
-
-# In[ ]:
