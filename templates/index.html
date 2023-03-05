@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Webapp</title>
+    <style>
+      body {
+        font-family: Montserrat, sans-serif;
+        background-color: #f5f5f5;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        max-width: 625px;
+        margin: 0 auto;
+      }
+      input[type=range] {
+        width: 100%;
+      }
+      input[type=text] {
+        width: 50px;
+        display: inline-block;
+        margin-left: 10px;
+      }
+      input[type=submit], button {
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: block;
+        margin: 0 auto;
+      }
+      #result {
+        background-color: #5f5f5f;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(160, 157, 157, 0.2);
+        max-width: 500px;
+        margin: 20px auto;
+        text-align: center;
+        color: #fff;
+      }
+      #disclaimer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        font-size: 12px;
+        color: #5e5e5e;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Predict a Person's Mental Health</h1>
+    <form>
+      <label for="bmi">BMI:</label>
+      <br>
+      <input type="range" name="bmi" id="bmi" min="15" max="95" value="55" onchange="updateTextInput(this.value, 'bmiTextInput')">
+      <input type="text" id="bmiTextInput" value="55" readonly>
+
+      <br>
+      <br>
+      <br>
+
+      <label for="physical_health_days">In the last 30 days, how days has this person had worse physical health than normal?</label>
+      <br>
+      <input type="range" name="physical_health_days" id="physical_health_days" min="0" max="30" value="15" onchange="updateTextInput(this.value, 'physicalHealthDaysTextInput')">
+      <input type="text" id="physicalHealthDaysTextInput" value="15" readonly>
+      <br>
+    </form>
+
+    <br>
+    <button id="predict-btn">Predict</button>
+    <div id="result"></div>
+
+    <script>
+      function updateTextInput(val, id) {
+        document.getElementById(id).value = val;
+      }
+
+      document.getElementById('predict-btn').addEventListener('click', function() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/predict');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            const result = JSON.parse(xhr.responseText)['mental_health_days'];
+            document.getElementById('result').innerHTML = 'In the last 30 days, this person might have had ' + result.toFixed(2) + ' days with worse mental health than normal';
+          }
+        };
+        xhr.send('bmi=' + document.getElementById('bmi').value + '&physical_health_days=' + document.getElementById('physical_health_days').value);
+      });
+    </script>
+    <div id="disclaimer">
+    <p>This is a demo app. This app is not meant to very accurate or give medical advice. It uses a simple linear regression on data from https://www.kaggle.com/datasets/kamilpytlak/personal-key-indicators-of-heart-disease?select=heart_2020_cleaned.csv.</p>
+    </div>
+  </body>
+  </html>
